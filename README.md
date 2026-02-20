@@ -1,7 +1,14 @@
-# Congratulations on Your README!
+# NIST 800-171 Automated Compliance Scanner
 
-If you’re reading this, congratulations — you’ve successfully opened a **README file**.  
-That may seem simple, but it’s actually an important first step in learning how modern technical projects are documented and shared.
+## Project Overview  
+This project demostrates **"NIST-as-Code."** It uses a Python-based scanner to automatically audit a Windows system against 10 specific security controls from the **NIST 800-171** framework.
+
+Instead of checking settings by hand, this tool scans the system to provide an instant "Compliant" or "Non-Compliant" report. This bridges the gap between our security goals and our actual settings, verifying that our computer configurations strictly follow our written security requirements. 
+
+
+## Project Structure
+
+
 
 This file is written in **Markdown**, a lightweight formatting language used across the tech industry.
 
