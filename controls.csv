@@ -1,11 +1,11 @@
-ID,Control_Name,Description,Status
-3.1.5,Least Privilege,Restrict user access to minimum necessary,Compliant
-3.1.8,Limit Login Attempts,Lock account after 5 failed tries,Compliant
-3.1.9,Session Lock,Screen locks after 15 minutes of inactivity,Compliant
-3.4.7,Software Whitelisting,Only approved apps are allowed to run,Compliant
-3.5.3,Password Complexity,Require symbols/numbers/length,Compliant
-3.5.7,Password Reuse,Prevent using the last 24 passwords,Compliant
-3.5.8,Password Encryption,Store passwords using SHA-256 or better,Compliant
-3.8.3,Media Sanitization,Verify disk encryption (BitLocker),Compliant
-3.14.2,Malware Protection,Real-time antivirus is active,Compliant
-3.14.5,Update Definitions,Security signatures updated in last 24hrs,Compliant
+Control ID,Security Requirement,Current Status
+3.1.9,Session Lock,Compliant
+3.5.3,Password Complexity,Non-Compliant
+3.1.8,Limit Login Attempts,Compliant
+3.5.7,Password Reuse,Non-Compliant
+3.14.2,Malware Protection,Compliant
+3.8.3,Media Sanitization,Non-Compliant
+3.1.5,Least Privilege,Compliant
+3.5.8,Password Encryption,Compliant
+3.14.5,Update Definitions,Compliant
+3.4.7,Software Whitelisting,Non-Compliant
