@@ -5,7 +5,7 @@ This project demostrates **"NIST-as-Code."** It uses a Python-based scanner to a
 
 Instead of checking settings by hand, this tool scans the system to provide an instant "Compliant" or "Non-Compliant" report. This bridges the gap between our security goals and our actual settings, verifying that our computer configurations strictly follow our written security requirements. 
 
-
+---
 ## Project Structure
 
 
