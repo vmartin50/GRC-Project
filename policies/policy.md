@@ -1,5 +1,5 @@
 # NIST 800-171 Security Policy Handbook
-**Author:** [Vanessa Martin]  
+**Author:** Vanessa Martin  
 **Date:** February 20, 2026
 
 ## 1. Overview
