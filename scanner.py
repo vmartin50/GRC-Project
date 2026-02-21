@@ -18,9 +18,6 @@ Path("policies").mkdir(exist_ok=True)
 # This creates a text file that describes the goal of this project
 Path("policies/policy.md").write_text("# NIST 800-171 Policy Handbook\n" "This file proves that we are using code to verify our security instead of manual checklists.")  
 
-with open("./controls.csv", "w", newline="", encoding="utf-8" as f: 
-        w = csv,writer(f); w.writerow(["Control", "Name", "Validation"]); w.writerows(policy_rows)
-
 # This is a list of 10 NIST 800-171 controls. 
 # For each one, the script asks Windows a question. 
 # If the answer is 'Yes,' it marks it 'Compliant.' If 'No,' it marks it 'Non-Compliant.'
