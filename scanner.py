@@ -41,7 +41,7 @@ policy_rows = [
 # This file is the 'Live compliance status that will be displayed.
 csv_file = "./controls.csv"
 
-with open(csv_file, "w", newline="", encoding=utf-8") as f:
+with open(csv_file, "w", newline="", encoding="utf-8") as f:
 # This part formats the data so it looks like a spreadsheet.
 w = csv.writer(f)
 
