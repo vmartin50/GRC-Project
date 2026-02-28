@@ -1,6 +1,13 @@
 from pathlib import Path
 import csv, subprocess, json
 
+def is_admin():
+    """Checks if the script is being run with Administrative privileges."""
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
 def cmd_ok(cmd):
     """
     This function acts like a Digital Inspector. 
@@ -11,11 +18,20 @@ def cmd_ok(cmd):
         return subprocess.run(cmd, capture_output=True, text=True).returncode == 0
     except Exception:
         return False
+
+# Ensures the script has the elevated permissions required to query system settings.
+if not is_admin():
+    print("--------------------------------------------------")
+    print("❌ ERROR: ADMINISTRATIVE PRIVILEGES REQUIRED")
+    print("This audit requires access to system security logs.")
+    print("Please restart your terminal as 'Administrator'.")
+    print("--------------------------------------------------")
+    sys.exit(1)
         
-# This creates a 'policies' folder
+# This creates a 'policies' folder.
 Path("policies").mkdir(exist_ok=True)
 
-# This creates a text file that describes the goal of this project
+# This creates a text file that describes the goal of this project.
 Path("policies/policy.md").write_text("# NIST 800-171 Policy Handbook\n" "This file proves that we are using code to verify our security instead of manual checklists.")  
 
 # This is a list of 10 NIST 800-171 controls. 
@@ -45,7 +61,7 @@ w = csv.writer(f)
 # Creates the titles.
 w.write(["Control ID", "Security Requirement", "Current Status"])
 
-# Fills in the results for the 10 controls
+# Fills in the results for the 10 controls.
 w.writerows(policy_rows)
 
 print(f"--- SUCCESS ---")
