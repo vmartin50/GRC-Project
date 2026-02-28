@@ -12,8 +12,8 @@ Uses the `ctypes` library to verify the process is running with **Administrative
 The script loops through security controls, spawning sub-processes using Python's `subprocess` module to talk to Windows.
 5.  **Result Evaluation:**
 The script captures the **Exit Code** of the command.
-  * Exit Code 0: The system is configured correctly (Compliant).
-  * Exit Code non-0: The setting is missing or incorrect (Non-Compliant).
+*  ** Exit Code 0: The system is configured correctly (Compliant).
+*  ** Exit Code non-0: The setting is missing or incorrect (Non-Compliant).
 4.  **Data Persistence:**
 Results are saved into a **CSV file** for an audit trail.
 
