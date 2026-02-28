@@ -16,3 +16,15 @@ The script follows a linear four-stage process:
 
 ---
 
+## Windows Integration Layers
+The script pulls data from three primary "Sources of Truth":
+
+### 1. The Windows Registry
+The database for OS settings. Checked via `reg query` and `Get-ItemProperty`.
+
+### 2. System Service Manager
+Used to verify if security services (like Windows Defender) are actively **Running**.
+
+### 3. Command Line Utilities
+* **`net accounts`**: For password and lockout policies.
+* **`manage-bde`**: For BitLocker encryption status.
