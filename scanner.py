@@ -33,45 +33,69 @@ if not is_admin():
     print("--------------------------------------------------")
     sys.exit(1)
 
-# This establishes a reporting directory and an ISO-style timestamp
+# This establishes a reporting directory and standardized time format for audit logging.
 Path("reports").mkdir(exist_ok=True)
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
 # This is a list of 10 NIST 800-171 controls. 
 # For each one, the script asks Windows a question. 
 # If the answer is 'Yes,' it marks it 'Compliant.' If 'No,' it marks it 'Non-Compliant.'
-policy_rows = [
-    ["3.1.9", "Session Lock", "Compliant" if cmd_ok("powershell -command \"Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' -Name ScreenSaveActive\"") else "Non-Compliant"],
-    ["3.5.3", "Password Complexity", "Compliant" if cmd_ok("net accounts | findstr /C:\"Password complexity\"") else "Non-Compliant"],
-    ["3.1.8", "Limit Login Attempts", "Compliant" if cmd_ok("net accounts | findstr /C:\"Lockout threshold\"") else "Non-Compliant"],
-    ["3.5.7", "Password Reuse", "Compliant" if cmd_ok("net accounts | findstr /C:\"Length of password history\"") else "Non-Compliant"],
-    ["3.14.2", "Malware Protection", "Compliant" if cmd_ok("powershell -command \"Get-Service WinDefend\"") else "Non-Compliant"],
-    ["3.8.3", "Media Sanitization", "Compliant" if cmd_ok("manage-bde -status C:") else "Non-Compliant"],
-    ["3.1.5", "Least Privilege", "Compliant" if cmd_ok("whoami /groups | findstr /C:\"Mandatory Label\\High Mandatory Level\"") else "Non-Compliant"],
-    ["3.5.8", "Password Encryption", "Compliant" if cmd_ok("reg query HKLM\\SAM\\SAM") else "Non-Compliant"],
-    ["3.14.5", "Update Definitions", "Compliant" if cmd_ok("powershell -command \"Get-MpComputerStatus\"") else "Non-Compliant"],
-    ["3.4.7", "Software Whitelisting", "Compliant" if cmd_ok("powershell -command \"Get-AppLockerPolicy -Local\"") else "Non-Compliant"]
+checks = [
+   ("3.1.9", "Session Lock", "powershell -command \"Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' -Name ScreenSaveActive\""),
+    ("3.5.3", "Password Complexity", "net accounts | findstr /C:\"Password complexity\""),
+    ("3.1.8", "Limit Login Attempts", "net accounts | findstr /C:\"Lockout threshold\""),
+    ("3.5.7", "Password Reuse", "net accounts | findstr /C:\"Length of password history\""),
+    ("3.14.2", "Malware Protection", "powershell -command \"Get-Service WinDefend\""),
+    ("3.8.3", "Media Sanitization", "manage-bde -status C:"),
+    ("3.1.5", "Least Privilege", "whoami /groups | findstr /C:\"Mandatory Label\\High Mandatory Level\""),
+    ("3.5.8", "Password Encryption", "reg query HKLM\\SAM\\SAM"),
+    ("3.14.5", "Update Definitions", "powershell -command \"Get-MpComputerStatus\""),
+    ("3.4.7", "Software Whitelisting", "powershell -command \"Get-AppLockerPolicy -Local\"")
 ]
 
 audit_results = []
-failures = [] # Buffer to store non-compliant items for the final summary
+# This assumes the system is compliant until a single check fails.
 overall_compliant = True
 
 print(f"--- NIST 800-171 Audit Started: {timestamp} ---")
 
-# This saves the results into a CSV file.
-# This file is the 'Live compliance status that will be displayed.
-csv_file = "./controls.csv"
+# This is the execution loop
+for control_id, name, command in checks:
+    is_compliant = cmd_ok(command)
 
-with open(csv_file, "w", newline="", encoding="utf-8") as f:
-# This part formats the data so it looks like a spreadsheet.
-w = csv.writer(f)
+status = "Compliant" if is_compliant else "Non-Compliant"
 
-# Creates the titles.
-w.write(["Control ID", "Security Requirement", "Current Status"])
+# If any check is False, the entire system is Non-Compliant.
+if not is_compliant:
+        overall_compliant = False
 
-# Fills in the results for the 10 controls.
-w.writerows(policy_rows)
+# Stores data for the report
+audit_results.append({
+        "control_id": control_id,
+        "requirement": name,
+        "status": status,
+        "check_time": timestamp
+    })
+    print(f"[{control_id}] {name}: {status}")
 
-print(f"--- SUCCESS ---")
-print("The audit is finished. Your results are in {csv_file}")
+final_status = "SYSTEM COMPLIANT" if overall_compliant else "SYSTEM NON-COMPLIANT"
+
+# Report generation
+# JSON Export: Structured for automated dashboards (PowerBI/SIEM)
+with open("reports/audit_results.json", "w") as jf:
+    json.dump({
+        "summary": final_status, 
+        "scan_time": timestamp,
+        "results": audit_results
+    }, jf, indent=4)
+
+# CSV Export: Formatted for human review in Excel
+with open("reports/audit_results.csv", "w", newline="") as cf:
+    # Use DictWriter to map our dictionary keys directly to CSV columns
+    writer = csv.DictWriter(cf, fieldnames=["control_id", "requirement", "status", "check_time"])
+    writer.writeheader()
+    writer.writerows(audit_results)
+
+print(f"\n--- AUDIT COMPLETE ---")
+print(f"Overall Result: {final_status}")
+print(f"Reports are available in the 'reports/' folder.")
