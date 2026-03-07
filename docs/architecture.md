@@ -82,8 +82,8 @@ This ensures that all generated reports in the `/reports` folder are:
 
 Designed for ingestion into:
 
-- **SIEM tools** (e.g., Splunk)
-- **Dashboards** (e.g., PowerBI)
+- **SIEM tools** 
+- **Dashboards** 
 
 ### CSV (Human-Readable)
 
