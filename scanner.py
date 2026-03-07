@@ -4,6 +4,7 @@ import csv
 import json
 import subprocess
 from pathlib import Path
+from datetime import datetime
 
 def is_admin():
     """Checks if the script is being run with Administrative privileges."""
@@ -19,7 +20,7 @@ def cmd_ok(cmd):
     If the setting is correct, it returns True. If not, it returns False.
     """
     try:
-        return subprocess.run(cmd, capture_output=True, text=True).returncode == 0
+        return subprocess.run(cmd, capture_output=True, text=True, shell=True).returncode == 0
     except Exception:
         return False
 
@@ -31,13 +32,11 @@ if not is_admin():
     print("Please restart your terminal as 'Administrator'.")
     print("--------------------------------------------------")
     sys.exit(1)
+
+# This establishes a reporting directory and an ISO-style timestamp
+Path("reports").mkdir(exist_ok=True)
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-# This creates a 'policies' folder.
-Path("policies").mkdir(exist_ok=True)
-
-# This creates a text file that describes the goal of this project.
-Path("policies/policy.md").write_text("# NIST 800-171 Policy Handbook\n" "This file proves that we are using code to verify our security instead of manual checklists.")  
-
 # This is a list of 10 NIST 800-171 controls. 
 # For each one, the script asks Windows a question. 
 # If the answer is 'Yes,' it marks it 'Compliant.' If 'No,' it marks it 'Non-Compliant.'
@@ -53,6 +52,12 @@ policy_rows = [
     ["3.14.5", "Update Definitions", "Compliant" if cmd_ok("powershell -command \"Get-MpComputerStatus\"") else "Non-Compliant"],
     ["3.4.7", "Software Whitelisting", "Compliant" if cmd_ok("powershell -command \"Get-AppLockerPolicy -Local\"") else "Non-Compliant"]
 ]
+
+audit_results = []
+failures = [] # Buffer to store non-compliant items for the final summary
+overall_compliant = True
+
+print(f"--- NIST 800-171 Audit Started: {timestamp} ---")
 
 # This saves the results into a CSV file.
 # This file is the 'Live compliance status that will be displayed.
