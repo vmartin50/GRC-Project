@@ -85,7 +85,7 @@ python scanner.py
 
 ---
 
-# 📊 Understanding Results
+# Understanding Results
 
 After execution, a **`reports/`** folder will be created containing:
 
