@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 
 # Page Configuration
-st.set-page_config(page_title="NIST 800-171 Auditor", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="NIST 800-171 Auditor", page_icon="🛡️", layout="wide")
 
 st.title("🛡️ NIST 800-171 Automated Compliance Dashboard")
 st.markdown("---")
