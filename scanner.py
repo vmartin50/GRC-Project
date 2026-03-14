@@ -76,7 +76,7 @@ audit_results.append({
         "status": status,
         "check_time": timestamp
     })
-    print(f"[{control_id}] {name}: {status}")
+print(f"[{control_id}] {name}: {status}")
 
 final_status = "SYSTEM COMPLIANT" if overall_compliant else "SYSTEM NON-COMPLIANT"
 
