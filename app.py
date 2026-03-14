@@ -8,13 +8,14 @@ st.title("🛡️ NIST 800-171 Compliance Dashboard")
 
 RESULTS_FILE = 'reports/audit_results.csv'
 
+# Check if the file exists before doing anything else
 if os.path.exists(RESULTS_FILE):
     # Read the data
     df = pd.read_csv(RESULTS_FILE)
 
     # Metric calculations
     total = len(df)
-    passed = len(df[df['status'] == 'Compliant'])
+    passed = len(df['status'] == 'Compliant').sum() # More robust counting
     failed = total - passed
     score = (passed / total) * 100
 
@@ -41,12 +42,19 @@ if os.path.exists(RESULTS_FILE):
         hide_index=True
     )
 
+    # --- REFRESH BUTTON ---
+    if st.button("Force Refresh Data"):
+        st.cache_data.clear()
+        st.rerun()
+
+    # --- SIDEBAR FOOTER ---
+    # We use .get() or check index to prevent crashes
+    last_scan = df['check_time'].iloc[0] if not df.empty else "No Data"
+    st.sidebar.info(f"Last Scan: {last_scan}")
+
 else:
-    st.warning("No audit data found. Please run 'python scanner.py' first.")
-
-if st.button("Force Refresh Data"):
-    st.cache_data.clear()
-    st.rerun()
-
-# 4. Footer
-st.sidebar.info(f"Last Scan: {df['check_time'].iloc[0] if os.path.exists(RESULTS_FILE) else 'N/A'}")
+    # This shows if scanner.py hasn't been run yet
+    st.warning("⚠️ No audit data found. Please run 'python scanner.py' as Administrator first.")
+    
+    if st.button("Check Again for File"):
+        st.rerun()
