@@ -30,8 +30,8 @@ This tool bridges the gap between complex security requirements and actionable d
 Open your terminal and run:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME 
+git clone https://github.com/vmartin50/GRC-Project.git
+cd GRC-Project 
 ```
 
 ---
