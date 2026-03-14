@@ -9,7 +9,7 @@ Identification,3.5.8,Password Encryption,"reg query ""HKEY_LOCAL_MACHINE\SYSTEM\
 Config Management,3.4.1,System Baseline,driverquery
 Config Management,3.4.7,Software Inventory,powershell Get-StartApps
 Config Management,3.4.8,Application Whitelisting,"reg query ""HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers"""
-Incident Response,3.6.1,Incident Handling Capability,powershell Get-Service -Name "EventLog"
+Incident Response,3.6.1,Incident Handling Capability,powershell Get-Service -Name ""EventLog""
 Maintenance,3.7.2,Tools Inspection,powershell Get-Command -Module Microsoft.PowerShell.Management
 Media Protection,3.8.3,Media Sanitization (Bitlocker),manage-bde -status
 Media Protection,3.8.1,Media Storage Restrictions,"reg query ""HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\RemovableStorageDevices"""
