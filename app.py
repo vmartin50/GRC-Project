@@ -73,11 +73,12 @@ if os.path.exists(RESULTS_FILE):
 
     st.divider()
 
-    # -----------------------------
-    # JSON REPORT VIEWER
-    # -----------------------------
-    st.subheader("Raw JSON Report")
+# -----------------------------
+# JSON REPORT VIEWER BUTTON
+# -----------------------------
+st.subheader("Raw JSON Report")
 
+if st.button("View JSON Report"):
     if os.path.exists(JSON_FILE):
         with open(JSON_FILE) as f:
             json_data = json.load(f)
