@@ -1,18 +1,18 @@
 family,id,name,command
 Access Control,3.1.1,Authorized User List,net user
-Access Control,3.1.8,Account Lockout Policy,"net accounts | findstr /C:""Lockout threshold"""
-Access Control,3.1.9,Session Lock Enabled,"reg query ""HKEY_CURRENT_USER\Control Panel\Desktop"" /v ScreenSaveActive"
+Access Control,3.1.8,Account Lockout Policy,"net accounts | findstr /C:'Lockout threshold'"
+Access Control,3.1.9,Session Lock Enabled,"reg query 'HKEY_CURRENT_USER\Control Panel\Desktop' /v ScreenSaveActive"
 Access Control,3.1.2,Privileged Role Review,net localgroup administrators
-Identification,3.5.2,Password Complexity,"net accounts | findstr /C:""Password complexity"""
-Identification,3.5.7,Password History (Reuse),"net accounts | findstr /C:""Length of password history"""
-Identification,3.5.8,Password Encryption,"reg query ""HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa"" /v LmCompatibilityLevel"
+Identification,3.5.2,Password Complexity,"net accounts | findstr /C:'Password complexity'"
+Identification,3.5.7,Password History (Reuse),"net accounts | findstr /C:'Length of password history'"
+Identification,3.5.8,Password Encryption,"reg query 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa' /v LmCompatibilityLevel"
 Config Management,3.4.1,System Baseline,driverquery
 Config Management,3.4.7,Software Inventory,powershell Get-StartApps
-Config Management,3.4.8,Application Whitelisting,"reg query ""HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers"""
-Incident Response,3.6.1,Incident Handling Capability,"powershell Get-Service -Name EventLog"
+Config Management,3.4.8,Application Whitelisting,"reg query 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers'"
+Incident Response,3.6.1,Incident Handling Capability,powershell Get-Service -Name EventLog
 Maintenance,3.7.2,Tools Inspection,powershell Get-Command -Module Microsoft.PowerShell.Management
 Media Protection,3.8.3,Media Sanitization (Bitlocker),manage-bde -status
-Media Protection,3.8.1,Media Storage Restrictions,"reg query ""HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\RemovableStorageDevices"""
+Media Protection,3.8.1,Media Storage Restrictions,"reg query 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\RemovableStorageDevices'"
 Audit & Accountability,3.3.1,Audit Log Generation,wevtutil gl System
 System Protection,3.14.2,Malware Protection (Defender),powershell Get-MpComputerStatus
 System Protection,3.14.4,Periodic Scanning,powershell Get-MpPreference
