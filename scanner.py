@@ -42,7 +42,7 @@ print("Total Controls:", len(df_controls))
 # This acts as a 'bucket' that will hold every single check result.
 audit_results = []
 
-print(f"🚀 Starting NIST Audit of {len(df_controls)} controls...")
+print(f"Starting NIST Audit of {len(df_controls)} controls...")
 
 # --- STEP 3: THE EXECUTION LOOP ---
 # This loop goes through the CSV row by row (3.1.1, then 3.1.2, etc.)
