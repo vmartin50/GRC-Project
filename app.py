@@ -44,7 +44,6 @@ if os.path.exists(RESULTS_FILE):
 
     # --- REFRESH BUTTON ---
     if st.button("Force Refresh Data"):
-        st.cache_data.clear()
         st.rerun()
 
     # --- SIDEBAR FOOTER ---
