@@ -3,6 +3,7 @@ import sys
 import csv
 import json
 import subprocess
+import pandas as pd # Make sure to run 'pip install pandas'
 from pathlib import Path
 from datetime import datetime
 
@@ -14,74 +15,68 @@ def is_admin():
         return False
 
 def cmd_ok(cmd):
-    """
-    This function acts like a Digital Inspector. 
-    It runs a Windows command and checks if the system says 'OK' (exit code 0).
-    If the setting is correct, it returns True. If not, it returns False.
-    """
+    """Runs a Windows command and checks if the system says 'OK' (exit code 0)."""
     try:
+        # We use shell=True to handle the pipes (|) inside your CSV commands
         return subprocess.run(cmd, capture_output=True, text=True, shell=True).returncode == 0
     except Exception:
         return False
 
-# Ensures the script has the elevated permissions required to query system settings.
+# 1. Privilege Check
 if not is_admin():
     print("--------------------------------------------------")
     print("❌ ERROR: ADMINISTRATIVE PRIVILEGES REQUIRED")
-    print("This audit requires access to system security logs.")
     print("Please restart your terminal as 'Administrator'.")
     print("--------------------------------------------------")
     sys.exit(1)
 
-# This establishes a reporting directory and standardized time format for audit logging.
+# 2. Setup Reporting
 Path("reports").mkdir(exist_ok=True)
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-# This is a list of 10 NIST 800-171 controls. 
-# For each one, the script asks Windows a question. 
-# If the answer is 'Yes,' it marks it 'Compliant.' If 'No,' it marks it 'Non-Compliant.'
-checks = [
-   ("3.1.9", "Session Lock", "powershell -command \"Get-ItemProperty 'HKCU:\\Control Panel\\Desktop' -Name ScreenSaveActive\""),
-    ("3.5.3", "Password Complexity", "net accounts | findstr /C:\"Password complexity\""),
-    ("3.1.8", "Limit Login Attempts", "net accounts | findstr /C:\"Lockout threshold\""),
-    ("3.5.7", "Password Reuse", "net accounts | findstr /C:\"Length of password history\""),
-    ("3.14.2", "Malware Protection", "powershell -command \"Get-Service WinDefend\""),
-    ("3.8.3", "Media Sanitization", "manage-bde -status C:"),
-    ("3.1.5", "Least Privilege", "whoami /groups | findstr /C:\"Mandatory Label\\High Mandatory Level\""),
-    ("3.5.8", "Password Encryption", "reg query HKLM\\SAM\\SAM"),
-    ("3.14.5", "Update Definitions", "powershell -command \"Get-MpComputerStatus\""),
-    ("3.4.7", "Software Whitelisting", "powershell -command \"Get-AppLockerPolicy -Local\"")
-]
+
+# 3. LOAD CONTROLS FROM CSV (Replacing the hard-coded list)
+if not Path("controls.csv").exists():
+    print("❌ ERROR: controls.csv not found! Please run 'git pull' to get it from GitHub.")
+    sys.exit(1)
+
+# Reading the CSV using Pandas
+df_controls = pd.read_csv("controls.csv")
 
 audit_results = []
-# This assumes the system is compliant until a single check fails.
 overall_compliant = True
 
 print(f"--- NIST 800-171 Audit Started: {timestamp} ---")
+print(f"Loading {len(df_controls)} controls from CSV...\n")
 
-# This is the execution loop
-for control_id, name, command in checks:
+# 4. EXECUTION LOOP
+# We now iterate through the rows of your CSV file
+for index, row in df_controls.iterrows():
+    control_id = row['id']
+    name = row['name']
+    command = row['command']
+    family = row['family']
+
     is_compliant = cmd_ok(command)
+    status = "Compliant" if is_compliant else "Non-Compliant"
 
-status = "Compliant" if is_compliant else "Non-Compliant"
-
-# If any check is False, the entire system is Non-Compliant.
-if not is_compliant:
+    if not is_compliant:
         overall_compliant = False
 
-# Stores data for the report
-audit_results.append({
+    # Stores data for the report (including the family name now!)
+    audit_results.append({
+        "family": family,
         "control_id": control_id,
         "requirement": name,
         "status": status,
         "check_time": timestamp
     })
-print(f"[{control_id}] {name}: {status}")
+    
+    print(f"[{control_id}] {name}: {status}")
 
+# 5. FINAL STATUS & EXPORT
 final_status = "SYSTEM COMPLIANT" if overall_compliant else "SYSTEM NON-COMPLIANT"
 
-# Report generation
-# JSON Export: Structured for automated dashboards (PowerBI/SIEM)
+# JSON Export
 with open("reports/audit_results.json", "w") as jf:
     json.dump({
         "summary": final_status, 
@@ -89,13 +84,10 @@ with open("reports/audit_results.json", "w") as jf:
         "results": audit_results
     }, jf, indent=4)
 
-# CSV Export: Formatted for human review in Excel
-with open("reports/audit_results.csv", "w", newline="") as cf:
-    # Use DictWriter to map our dictionary keys directly to CSV columns
-    writer = csv.DictWriter(cf, fieldnames=["control_id", "requirement", "status", "check_time"])
-    writer.writeheader()
-    writer.writerows(audit_results)
+# CSV Export (This is what app.py will read)
+results_df = pd.DataFrame(audit_results)
+results_df.to_csv("reports/audit_results.csv", index=False)
 
 print(f"\n--- AUDIT COMPLETE ---")
 print(f"Overall Result: {final_status}")
-print(f"Reports are available in the 'reports/' folder.")
+print(f"Reports available in 'reports/' folder.")
