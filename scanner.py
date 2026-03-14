@@ -7,7 +7,7 @@ import csv
 from pathlib import Path
 from datetime import datetime
 
-# --- FUNCTION: ADMIN CHECK ---
+# ADMIN CHECK
 def is_admin():
     """Verifies the script has permission to check system security settings."""
     try:
@@ -15,12 +15,11 @@ def is_admin():
     except:
         return False
 
-# Stop the script immediately if not run as Administrator
+# Stops the script immediately if not run as Administrator
 if not is_admin():
     print("❌ ERROR: Please run as Administrator.")
     sys.exit(1)
 
-# --- SETUP: FOLDERS & TIME ---
 # Create a 'reports' folder if it doesn't already exist
 Path("reports").mkdir(exist_ok=True)
 # Record the exact time this scan started
@@ -52,7 +51,6 @@ for index, row in df_controls.iterrows():
     # If the command finishes with exit code 0, it passed.
     status = "Compliant" if process.returncode == 0 else "Non-Compliant"
     
-    # ADD THE DATA TO OUR BUCKET:
   
     audit_results.append({
         "family": row['family'],
@@ -71,7 +69,7 @@ results_df = pd.DataFrame(audit_results)
 # Save the full list of results to one file
 results_df.to_csv("reports/audit_results.csv", index=False)
 
-# Optional: Save a JSON version for other apps to use
+# Save a JSON version for other apps to use
 with open("reports/audit_results.json", "w") as jf:
     json.dump({"scan_time": timestamp, "results": audit_results}, jf, indent=4)
 
