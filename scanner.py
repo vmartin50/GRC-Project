@@ -1,93 +1,54 @@
 import ctypes
 import sys
-import csv
-import json
+import pandas as pd
 import subprocess
-import pandas as pd # Make sure to run 'pip install pandas'
 from pathlib import Path
 from datetime import datetime
 
 def is_admin():
-    """Checks if the script is being run with Administrative privileges."""
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
     except:
         return False
 
-def cmd_ok(cmd):
-    """Runs a Windows command and checks if the system says 'OK' (exit code 0)."""
-    try:
-        # We use shell=True to handle the pipes (|) inside your CSV commands
-        return subprocess.run(cmd, capture_output=True, text=True, shell=True).returncode == 0
-    except Exception:
-        return False
-
-# 1. Privilege Check
 if not is_admin():
-    print("--------------------------------------------------")
-    print("❌ ERROR: ADMINISTRATIVE PRIVILEGES REQUIRED")
-    print("Please restart your terminal as 'Administrator'.")
-    print("--------------------------------------------------")
+    print("❌ ERROR: Please run as Administrator.")
     sys.exit(1)
 
-# 2. Setup Reporting
+# Initialize paths and data
 Path("reports").mkdir(exist_ok=True)
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# 3. LOAD CONTROLS FROM CSV (Replacing the hard-coded list)
+# Load your 110+ controls
 if not Path("controls.csv").exists():
-    print("❌ ERROR: controls.csv not found! Please run 'git pull' to get it from GitHub.")
+    print("❌ ERROR: controls.csv not found!")
     sys.exit(1)
 
-# Reading the CSV using Pandas
 df_controls = pd.read_csv("controls.csv")
-
 audit_results = []
-overall_compliant = True
 
-print(f"--- NIST 800-171 Audit Started: {timestamp} ---")
-print(f"Loading {len(df_controls)} controls from CSV...\n")
+print(f"🚀 Starting NIST Audit: {timestamp}")
 
-# 4. EXECUTION LOOP
-# We now iterate through the rows of your CSV file
+# --- THE CORRECTED LOOP ---
 for index, row in df_controls.iterrows():
-    control_id = row['id']
-    name = row['name']
-    command = row['command']
-    family = row['family']
-
-    is_compliant = cmd_ok(command)
-    status = "Compliant" if is_compliant else "Non-Compliant"
-
-    if not is_compliant:
-        overall_compliant = False
-
-    # Stores data for the report (including the family name now!)
+    # 1. Run the command
+    process = subprocess.run(row['command'], shell=True, capture_output=True, text=True)
+    
+    # 2. Determine status
+    status = "Compliant" if process.returncode == 0 else "Non-Compliant"
+    
+    # 3. APPEND INSIDE THE LOOP (Crucial fix!)
     audit_results.append({
-        "family": family,
-        "control_id": control_id,
-        "requirement": name,
+        "family": row['family'],
+        "control_id": row['id'],
+        "name": row['name'],
         "status": status,
         "check_time": timestamp
     })
     
-    print(f"[{control_id}] {name}: {status}")
+    print(f"Checked [{row['id']}]: {status}")
 
-# 5. FINAL STATUS & EXPORT
-final_status = "SYSTEM COMPLIANT" if overall_compliant else "SYSTEM NON-COMPLIANT"
-
-# JSON Export
-with open("reports/audit_results.json", "w") as jf:
-    json.dump({
-        "summary": final_status, 
-        "scan_time": timestamp,
-        "results": audit_results
-    }, jf, indent=4)
-
-# CSV Export (This is what app.py will read)
+# --- SAVE AFTER LOOP FINISHES ---
 results_df = pd.DataFrame(audit_results)
 results_df.to_csv("reports/audit_results.csv", index=False)
-
-print(f"\n--- AUDIT COMPLETE ---")
-print(f"Overall Result: {final_status}")
-print(f"Reports available in 'reports/' folder.")
+print(f"\n✅ Done! {len(results_df)} controls processed.")
