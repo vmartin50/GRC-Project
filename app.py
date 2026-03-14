@@ -15,7 +15,7 @@ if os.path.exists(RESULTS_FILE):
 
     # Metric calculations
     total = len(df)
-    passed = len(df['status'] == 'Compliant').sum() # More robust counting
+    passed = (df['status'] == 'Compliant').sum()
     failed = total - passed
     score = (passed / total) * 100
 
