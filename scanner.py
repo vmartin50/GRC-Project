@@ -31,8 +31,12 @@ if not Path("controls.csv").exists():
     print("❌ ERROR: controls.csv not found! Run 'git pull' first.")
     sys.exit(1)
 
-# Read the CSV into a Pandas DataFrame (a virtual table)
+# Read the CSV into a Pandas DataFrame 
 df_controls = pd.read_csv("controls.csv")
+
+print("DEBUG: Controls Loaded")
+print(df_controls)
+print("Total Controls:", len(df_controls))
 
 # --- STEP 2: INITIALIZE THE RESULTS LIST ---
 # This acts as a 'bucket' that will hold every single check result.
