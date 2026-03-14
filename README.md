@@ -25,7 +25,19 @@ This tool bridges the gap between complex security requirements and actionable d
 - **Python 3.10+**
 - **Administrator Privileges** (required to query security logs and registry keys)
 
-### 2. Install Dependencies
+### 2. Clone the Repository
+
+Open your terminal and run:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+cd YOUR_REPO_NAME 
+```
+
+---
+
+
+### 3. Install Dependencies
 
 Open your terminal and run:
 
