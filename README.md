@@ -1,99 +1,99 @@
 # NIST 800-171 Automated Compliance Scanner
 
-## Project Overview  
-This project demostrates **"Compliance-as-Code."** It uses a Python-based scanner to automatically audit a Windows system against 10 specific security controls from the **NIST 800-171** framework.
+An automated compliance scanning tool designed to audit Windows systems against **NIST 800-171** security controls. This project uses a Python-based engine to execute system checks and a Streamlit dashboard to visualize the compliance status in real-time.
 
 ---
 
-## The Problem
-In many organizations, security auditing is a slow, manual process. IT teams often rely on checklists and "best guesses" to determine if their workstations are secure. This leads to:
-* **Human Error:** Missing critical settings during manual checks.
-* **Lack of Evidence:** No timestamped proof for auditors that a system was actually secure.
-* **Consistency Gaps:** Different machines having different security levels
+## Overview
+
+This tool bridges the gap between complex security requirements and actionable data. It reads a library of security controls from a CSV file, queries the Windows environment (Registry, PowerShell, and CMD), and generates a structured report.
+
+### Key Features
+
+- **Data-Driven:** Easily add or edit controls by updating `controls.csv` without touching the code.
+- **Automated Scanning:** Runs deep-system checks via `scanner.py`.
+- **Visual Analytics:** Interactive dashboard via `app.py` for executive and technical reviews.
+- **Multi-Format Reporting:** Generates results in both `.csv` and `.json`.
 
 ---
 
-## The Solution
-Instead of checking settings by hand, this tool scans the system to provide an instant "Compliant" or "Non-Compliant" report. This bridges the gap between our security goals and our actual settings, verifying that our computer configurations strictly follow our written security requirements. 
+## Installation & Setup
 
----
+### 1. Prerequisites
 
-## Administrative Gatekeeper
-Automatically verifies **elevated privileges** before querying sensitive system hives.
+- **Windows 10/11** (Pro or Enterprise recommended for full feature support)
+- **Python 3.10+**
+- **Administrator Privileges** (required to query security logs and registry keys)
 
-## Binary Compliance Model
-Implements a **Strict Compliance logic**:  
-If one sub-control fails, the system status is marked as **Non-Compliant**.
+### 2. Install Dependencies
 
-## Multi-Format Reporting
-Generates both:
-
-- **JSON** (for SIEM platforms and dashboards)
-- **CSV** (for human auditors)
-
-## Audit Logging
-All reports are timestamped using **ISO 8601 standards** to provide a verifiable audit trail.
-
----  
-
-## 🔍 The 10 NIST Controls Checked
-The scanner verifies the following essential security areas:
-
-### Control Mapping Table
-| NIST ID | Security Requirement | Technical Check Method |
-| :--- | :--- | :--- |
-| **3.1.9** | **Session Lock** | Registry Key: `ScreenSaveActive` |
-| **3.5.3** | **Password Complexity** | Windows `net accounts` policy |
-| **3.1.8** | **Limit Login Attempts** | Windows `lockout threshold` |
-| **3.5.7** | **Password Reuse** | Password history length check |
-| **3.14.2**| **Malware Protection** | Windows Defender Service Status |
-| **3.8.3** | **Media Sanitization** | `manage-bde` BitLocker Status |
-| **3.1.5** | **Least Privilege** | User SID / Group Membership check |
-| **3.5.8** | **Password Encryption** | Registry SAM protection check |
-| **3.14.5**| **Update Definitions** | `Get-MpComputerStatus` via PowerShell |
-| **3.4.7** | **Software Whitelisting** | `Get-AppLockerPolicy` check |
-
-# Getting Started
-
-## Prerequisites
-
-- **Operating System:** Windows 10 / Windows 11 / Windows Server
-- **Language:** Python 3.x
-- **Permissions:** Terminal must be run as **Administrator**
-
-     
----
-
-## Installation
-
-Clone the repository:
+Open your terminal and run:
 
 ```bash
-git clone https://github.com/yourusername/nist-800-171-scanner.git
-cd nist-800-171-scanner
+pip install pandas streamlit
 ```
 
 ---
 
-# Running the Audit
+## How to Use
 
-Execute the script from an **elevated terminal**:
+### Step 1: Run the Audit
+
+Open your terminal (**PowerShell** or **CMD**) as Administrator and execute:
 
 ```bash
 python scanner.py
 ```
 
+The script will loop through all controls in `controls.csv` and create a `reports/` folder containing your results.
+
 ---
 
-# Understanding Results
+### Step 2: Launch the Dashboard
 
-After execution, a **`reports/`** folder will be created containing:
+Run the Streamlit application to visualize your data:
 
-### `audit_results.csv`
+```bash
+streamlit run app.py
+```
 
-Open this file in **Excel or other spreadsheet tools** to view a row-by-row breakdown of each control.
+---
 
-### `audit_results.json`
+## Project Structure
+
+```
+project-folder/
+│
+├── scanner.py        # The engine that executes Windows commands
+├── app.py            # Streamlit dashboard UI
+├── controls.csv      # Library containing the NIST families, IDs, and commands
+│
+└── reports/          # Output folder
+    ├── audit_results.csv
+    └── audit_results.json
+```
+
+---
+
+## Security Controls Audited
+
+The current version audits **20+ core controls** across these NIST families:
+
+- **Access Control (AC)**
+- **Identification & Authentication (IA)**
+- **Configuration Management (CM)**
+- **System & Information Integrity (SI)**
+- **Media Protection (MP)**
+
+---
+
+## Disclaimer
+
+This tool is intended for **educational and auditing purposes**. It provides a technical snapshot of system settings but does **not guarantee full legal compliance** with NIST 800-171 standards.
+
+
+
+
 
 
 
