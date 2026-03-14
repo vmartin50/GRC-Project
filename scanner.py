@@ -32,7 +32,7 @@ if not Path("controls.csv").exists():
     sys.exit(1)
 
 # Read the CSV into a Pandas DataFrame 
-df_controls = pd.read_csv("controls.csv")
+df_controls = pd.read_csv("controls.csv", quoting=csv.QUOTE_MINIMAL)
 
 print("DEBUG: Controls Loaded")
 print(df_controls)
