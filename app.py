@@ -4,6 +4,78 @@ import os
 import subprocess
 import json
 
+st.markdown("""
+<style>
+
+html, body, [class*="css"]  {
+    background-color: #0a0f0a !important;
+    color: #00ff9d !important;
+    font-family: "Courier New", monospace;
+}
+
+/* Title styling */
+h1 {
+    color: #00ff9d !important;
+    text-shadow: 0 0 10px #00ff9d;
+    text-align: center;
+    font-weight: 900;
+}
+
+/* Section headers */
+h2, h3 {
+    color: #00e68a !important;
+    text-shadow: 0 0 6px #00e68a;
+}
+
+/* Metric cards */
+div[data-testid="metric-container"] {
+    background: rgba(0, 255, 157, 0.08);
+    border: 1px solid #00ff9d55;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 15px #00ff9d33;
+}
+
+/* Dataframe styling */
+.dataframe {
+    color: #00ff9d !important;
+}
+
+.dataframe th {
+    background-color: #0f1a0f !important;
+    color: #00ff9d !important;
+}
+
+.dataframe td {
+    background-color: #0a0f0a !important;
+    color: #00ff9d !important;
+}
+
+/* Buttons */
+.stButton>button {
+    background-color: #00ff9d !important;
+    color: #000 !important;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    box-shadow: 0 0 10px #00ff9d;
+}
+
+.stButton>button:hover {
+    background-color: #00e68a !important;
+    box-shadow: 0 0 20px #00ff9d;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #0f1a0f !important;
+    border-right: 1px solid #00ff9d55;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
 st.set_page_config(page_title="NIST 800-171 Dashboard", layout="wide")
 
 st.title("🛡️ NIST 800-171 Compliance Dashboard")
