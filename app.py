@@ -8,72 +8,87 @@ st.markdown("""
 <style>
 
 html, body, [class*="css"]  {
-    background-color: #0a0f0a !important;
-    color: #00ff9d !important;
-    font-family: "Courier New", monospace;
+    background-color: #0e1117 !important;
+    color: #e0e0e0 !important;
+    font-family: "Inter", sans-serif;
 }
 
-/* Title styling */
+/* Title */
 h1 {
-    color: #00ff9d !important;
-    text-shadow: 0 0 10px #00ff9d;
+    color: #ffffff !important;
     text-align: center;
-    font-weight: 900;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
 }
 
 /* Section headers */
 h2, h3 {
-    color: #00e68a !important;
-    text-shadow: 0 0 6px #00e68a;
+    color: #c9d1d9 !important;
+    font-weight: 700;
+    margin-top: 30px;
 }
 
 /* Metric cards */
 div[data-testid="metric-container"] {
-    background: rgba(0, 255, 157, 0.08);
-    border: 1px solid #00ff9d55;
-    border-radius: 10px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 0 15px #00ff9d33;
-}
-
-/* Dataframe styling */
-.dataframe {
-    color: #00ff9d !important;
-}
-
-.dataframe th {
-    background-color: #0f1a0f !important;
-    color: #00ff9d !important;
-}
-
-.dataframe td {
-    background-color: #0a0f0a !important;
-    color: #00ff9d !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 
 /* Buttons */
 .stButton>button {
-    background-color: #00ff9d !important;
-    color: #000 !important;
+    background-color: #238636 !important;
+    color: white !important;
     border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    box-shadow: 0 0 10px #00ff9d;
+    border: 1px solid #2ea043;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
 }
 
 .stButton>button:hover {
-    background-color: #00e68a !important;
-    box-shadow: 0 0 20px #00ff9d;
+    background-color: #2ea043 !important;
+    border-color: #3fb950;
 }
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background-color: #0f1a0f !important;
-    border-right: 1px solid #00ff9d55;
+    background-color: #161b22 !important;
+    border-right: 1px solid #30363d;
+}
+
+/* Dataframe styling */
+.dataframe {
+    color: #e0e0e0 !important;
+}
+
+.dataframe th {
+    background-color: #21262d !important;
+    color: #e6edf3 !important;
+}
+
+.dataframe td {
+    background-color: #0e1117 !important;
+    color: #e6edf3 !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 
 st.set_page_config(page_title="NIST 800-171 Dashboard", layout="wide")
