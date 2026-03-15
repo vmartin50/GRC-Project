@@ -16,7 +16,9 @@ JSON_FILE = "reports/audit_results.json"
 # -----------------------------
 if st.button("Run NIST Audit"):
     with st.spinner("Running system audit..."):
-        subprocess.run(["python", "scanner.py"])
+        # Use python3 when needed (Linux/macOS)
+        python_cmd = "python3" if os.name != "nt" else "python"
+        subprocess.run([python_cmd, "scanner.py"])
     st.success("Audit completed!")
     st.rerun()
 
@@ -33,15 +35,18 @@ if os.path.exists(RESULTS_FILE):
     # METRICS
     # -----------------------------
     total = len(df)
-    passed = (df["status"] == "Compliant").sum()
-    failed = total - passed
-    score = (passed / total) * 100 if total > 0 else 0
+    compliant = (df["status"] == "Compliant").sum()
+    non_compliant = (df["status"] == "Non-Compliant").sum()
+    not_applicable = (df["status"] == "Not Applicable").sum()
 
-    c1, c2, c3 = st.columns(3)
+    score = (compliant / total) * 100 if total > 0 else 0
+
+    c1, c2, c3, c4 = st.columns(4)
 
     c1.metric("Compliance Score", f"{score:.1f}%")
-    c2.metric("Passed Controls", passed)
-    c3.metric("Failed Controls", failed, delta_color="inverse")
+    c2.metric("Compliant", compliant)
+    c3.metric("Non-Compliant", non_compliant)
+    c4.metric("Not Applicable", not_applicable)
 
     st.divider()
 
@@ -62,8 +67,12 @@ if os.path.exists(RESULTS_FILE):
     st.subheader(f"All Scanned Controls ({total})")
 
     def style_status(val):
-        color = "green" if val == "Compliant" else "red"
-        return f"color: {color}; font-weight: bold"
+        if val == "Compliant":
+            return "color: green; font-weight: bold"
+        elif val == "Non-Compliant":
+            return "color: red; font-weight: bold"
+        else:
+            return "color: gray; font-weight: bold"
 
     st.dataframe(
         df.style.applymap(style_status, subset=["status"]),
@@ -73,8 +82,11 @@ if os.path.exists(RESULTS_FILE):
 
     st.divider()
 
+else:
+    st.warning("⚠️ No audit data found. Click 'Run NIST Audit' to start a scan.")
+
 # -----------------------------
-# JSON REPORT VIEWER BUTTON
+# JSON REPORT VIEWER
 # -----------------------------
 st.subheader("Raw JSON Report")
 
@@ -90,9 +102,8 @@ if st.button("View JSON Report"):
     # -----------------------------
     # LAST SCAN INFO
     # -----------------------------
-    if not df.empty:
-        last_scan = df["check_time"].iloc[0]
-        st.sidebar.info(f"Last Scan: {last_scan}")
-
-else:
-    st.warning("⚠️ No audit data found. Click 'Run NIST Audit' to start a scan.")
+    if os.path.exists(RESULTS_FILE):
+        df = pd.read_csv(RESULTS_FILE)
+        if not df.empty:
+            last_scan = df["check_time"].iloc[0]
+            st.sidebar.info(f"Last Scan: {last_scan}")
