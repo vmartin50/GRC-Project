@@ -29,7 +29,7 @@ Awareness and Training,3.2.3,Provide security awareness on recognizing/reporting
 Audit and Accountability,3.3.1,Create and retain system audit logs,"wevtutil gl System","log show --info","journalctl --verify"
 Audit and Accountability,3.3.2,Ensure audit logs support incident investigation,"echo 'Check log retention policy'","",""
 Audit and Accountability,3.3.3,Review and update audited events,"echo 'Check audit policy'","",""
-Audit and Accountability,3.3.4,Alert in response to audit processing failures,"wevtutil gl Security","log show --predicate 'eventMessage contains \"error\"' --last 1","journalctl -p err -n 1"
+Audit and Accountability,3.3.4,Alert in response to audit processing failures,"wevtutil gl Security","log show --predicate 'eventMessage contains error' --last 1","journalctl -p err -n 1"
 Audit and Accountability,3.3.5,Correlate audit review and analysis,"echo 'Check SIEM / log correlation'","",""
 Audit and Accountability,3.3.6,Provide audit reduction and report generation,"echo 'Check log analysis tools'","",""
 Audit and Accountability,3.3.7,Provide audit record protection,"echo 'Check log access controls'","",""
