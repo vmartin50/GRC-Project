@@ -1,196 +1,118 @@
 import streamlit as st
 import pandas as pd
 import os
-import subprocess
-import json
 
-st.markdown("""
-<style>
+# ------------------------------
+# PAGE CONFIG
+# ------------------------------
 
-html, body, [class*="css"]  {
-    background-color: #0e1117 !important;
-    color: #e0e0e0 !important;
-    font-family: "Inter", sans-serif;
-}
+st.set_page_config(
+    page_title="NIST 800-171 Compliance Dashboard",
+    layout="wide"
+)
 
-/* Title */
-h1 {
-    color: #ffffff !important;
-    text-align: center;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 10px;
-}
-
-/* Section headers */
-h2, h3 {
-    color: #c9d1d9 !important;
-    font-weight: 700;
-    margin-top: 30px;
-}
-
-/* Metric cards */
-div[data-testid="metric-container"] {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-}
-
-/* Buttons */
-.stButton>button {
-    background-color: #238636 !important;
-    color: white !important;
-    border-radius: 8px;
-    border: 1px solid #2ea043;
-    font-weight: 600;
-    padding: 0.6rem 1.2rem;
-}
-
-.stButton>button:hover {
-    background-color: #2ea043 !important;
-    border-color: #3fb950;
-}
-
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #161b22 !important;
-    border-right: 1px solid #30363d;
-}
-
-/* Dataframe styling */
-.dataframe {
-    color: #e0e0e0 !important;
-}
-
-.dataframe th {
-    background-color: #21262d !important;
-    color: #e6edf3 !important;
-}
-
-.dataframe td {
-    background-color: #0e1117 !important;
-    color: #e6edf3 !important;
-}
-
-/* Scrollbars */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-thumb {
-    background: #30363d;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #484f58;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-
-
-st.set_page_config(page_title="NIST 800-171 Dashboard", layout="wide")
-
-st.title("🛡️ NIST 800-171 Compliance Dashboard")
+st.title("NIST 800-171 Compliance Dashboard")
 
 RESULTS_FILE = "reports/audit_results.csv"
-JSON_FILE = "reports/audit_results.json"
 
-# -----------------------------
-# RUN AUDIT BUTTON
-# -----------------------------
-if st.button("Run NIST Audit"):
-    with st.spinner("Running system audit..."):
-        # Use python3 when needed (Linux/macOS)
-        python_cmd = "python3" if os.name != "nt" else "python"
-        subprocess.run([python_cmd, "scanner.py"])
-    st.success("Audit completed!")
-    st.rerun()
+# ------------------------------
+# POA&M GENERATOR
+# ------------------------------
 
-st.divider()
+def generate_poam(df):
 
-# -----------------------------
-# CHECK IF RESULTS EXIST
-# -----------------------------
-if os.path.exists(RESULTS_FILE):
+    poam = df[df["status"] == "Non-Compliant"].copy()
 
-    df = pd.read_csv(RESULTS_FILE)
+    if len(poam) == 0:
+        return pd.DataFrame()
 
-    # -----------------------------
-    # METRICS
-    # -----------------------------
-    total = len(df)
-    compliant = (df["status"] == "Compliant").sum()
-    non_compliant = (df["status"] == "Non-Compliant").sum()
-    not_applicable = (df["status"] == "Not Applicable").sum()
+    poam["Weakness Description"] = "Control requirement not satisfied"
+    poam["Remediation Plan"] = "Implement required security configuration or policy"
+    poam["Milestone Date"] = "TBD"
+    poam["Responsible Party"] = "IT Security Team"
 
-    score = (compliant / total) * 100 if total > 0 else 0
+    return poam
 
-    c1, c2, c3, c4 = st.columns(4)
 
-    c1.metric("Compliance Score", f"{score:.1f}%")
-    c2.metric("Compliant", compliant)
-    c3.metric("Non-Compliant", non_compliant)
-    c4.metric("Not Applicable", not_applicable)
+# ------------------------------
+# LOAD RESULTS
+# ------------------------------
 
-    st.divider()
+if not os.path.exists(RESULTS_FILE):
+    st.error("No audit results found. Run scanner.py first.")
+    st.stop()
 
-    # -----------------------------
-    # COMPLIANCE CHART
-    # -----------------------------
-    st.subheader("Compliance Overview")
+df = pd.read_csv(RESULTS_FILE)
 
-    status_counts = df["status"].value_counts()
+# ------------------------------
+# METRICS
+# ------------------------------
 
-    st.bar_chart(status_counts)
+total_controls = len(df)
+passed = len(df[df["status"] == "Compliant"])
+failed = len(df[df["status"] == "Non-Compliant"])
+not_applicable = len(df[df["status"] == "Not Applicable"])
 
-    st.divider()
+compliance_score = round((passed / total_controls) * 100, 2)
 
-    # -----------------------------
-    # SHOW FULL CONTROL TABLE
-    # -----------------------------
-    st.subheader(f"All Scanned Controls ({total})")
+col1, col2, col3, col4 = st.columns(4)
 
-    def style_status(val):
-        if val == "Compliant":
-            return "color: green; font-weight: bold"
-        elif val == "Non-Compliant":
-            return "color: red; font-weight: bold"
-        else:
-            return "color: gray; font-weight: bold"
+col1.metric("Total Controls", total_controls)
+col2.metric("Compliant", passed)
+col3.metric("Non-Compliant", failed)
+col4.metric("Compliance Score", f"{compliance_score}%")
 
-    st.dataframe(
-        df.style.applymap(style_status, subset=["status"]),
-        use_container_width=True,
-        hide_index=True
-    )
+st.progress(compliance_score / 100)
 
-    st.divider()
+# ------------------------------
+# CONTROL RESULTS TABLE
+# ------------------------------
+
+st.subheader("Control Assessment Results")
+
+st.dataframe(
+    df,
+    use_container_width=True
+)
+
+# ------------------------------
+# FAMILY BREAKDOWN
+# ------------------------------
+
+st.subheader("Compliance by Control Family")
+
+family_summary = df.groupby(["family", "status"]).size().unstack(fill_value=0)
+
+st.dataframe(family_summary)
+
+# ------------------------------
+# POA&M SECTION
+# ------------------------------
+
+st.subheader("Plan of Action & Milestones (POA&M)")
+
+poam = generate_poam(df)
+
+if len(poam) == 0:
+
+    st.success("No failed controls. No POA&M required.")
 
 else:
-    st.warning("⚠️ No audit data found. Click 'Run NIST Audit' to start a scan.")
 
-# -----------------------------
-# JSON REPORT VIEWER
-# -----------------------------
-st.subheader("Raw JSON Report")
+    st.dataframe(poam, use_container_width=True)
 
-if st.button("View JSON Report"):
-    if os.path.exists(JSON_FILE):
-        with open(JSON_FILE) as f:
-            json_data = json.load(f)
+    poam_csv = poam.to_csv(index=False)
 
-        st.json(json_data)
-    else:
-        st.info("JSON report not found.")
+    st.download_button(
+        label="Download POA&M Report",
+        data=poam_csv,
+        file_name="POAM_Report.csv",
+        mime="text/csv"
+    )
 
-    # -----------------------------
-    # LAST SCAN INFO
-    # -----------------------------
-    if os.path.exists(RESULTS_FILE):
-        df = pd.read_csv(RESULTS_FILE)
-        if not df.empty:
-            last_scan = df["check_time"].iloc[0]
-            st.sidebar.info(f"Last Scan: {last_scan}")
+# ------------------------------
+# FOOTER
+# ------------------------------
+
+st.markdown("---")
+st.caption("NIST 800-171 Automated Compliance Dashboard")
