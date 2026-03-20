@@ -1,6 +1,6 @@
 # NIST 800-171 Automated Compliance Scanner
 
-An automated compliance scanning tool designed to audit Windows systems against **NIST 800-171** security controls. This project uses a Python-based engine to execute system checks and a Streamlit dashboard to visualize the compliance status in real-time.
+An automated compliance scanning tool designed to audit systems against **NIST 800-171** security controls. This project uses a Python-based engine to execute system checks and a Streamlit dashboard to visualize the compliance status in real-time.
 
 The scanner supports **Windows, macOS, and Linux**, automatically runs security checks for each NIST control, and generates **CSV and JSON reports** summarizing compliance status.  
 
