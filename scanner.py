@@ -1,3 +1,19 @@
+# AUTO-INSTALL REQUIRED PACKAGES
+
+import subprocess
+import sys
+
+required_packages = ["pandas", "streamlit"]
+
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        print(f" {package} not found. Installing...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# IMPORTS
+
 import sys
 import os
 import platform
@@ -8,9 +24,7 @@ import csv
 from pathlib import Path
 from datetime import datetime
 
-# ------------------------------
 # ADMIN / ROOT CHECK
-# ------------------------------
 
 def is_admin():
 
@@ -33,9 +47,7 @@ if not is_admin():
     print("ERROR: Script must be run with Administrator / root privileges.")
     sys.exit(1)
 
-# ------------------------------
 # SETUP
-# ------------------------------
 
 print("Starting NIST 800-171 Compliance Scan...\n")
 
@@ -43,9 +55,7 @@ Path("reports").mkdir(exist_ok=True)
 
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# ------------------------------
-# LOAD CONTROLS
-# ------------------------------
+# LOADS CONTROLS
 
 if not Path("controls.csv").exists():
     print("ERROR: controls.csv not found!")
@@ -55,23 +65,17 @@ df_controls = pd.read_csv("controls.csv", quoting=csv.QUOTE_MINIMAL)
 
 print(f"Loaded {len(df_controls)} controls.")
 
-# ------------------------------
-# DETECT OS
-# ------------------------------
+# DETECTS OS
 
 current_os = platform.system().lower()
 
 print(f"Detected Operating System: {current_os}\n")
 
-# ------------------------------
 # RESULTS STORAGE
-# ------------------------------
 
 audit_results = []
 
-# ------------------------------
 # EXECUTION LOOP
-# ------------------------------
 
 for index, row in df_controls.iterrows():
 
@@ -92,7 +96,7 @@ for index, row in df_controls.iterrows():
     else:
         command = None
 
-    # Handle empty command
+    
     if not command or str(command).lower() == "nan":
 
         status = "Not Applicable"
@@ -134,9 +138,7 @@ for index, row in df_controls.iterrows():
 
     print(f"[{control_id}] {control_name} → {status}")
 
-# ------------------------------
-# SAVE CSV REPORT
-# ------------------------------
+# SAVES CSV REPORT
 
 results_df = pd.DataFrame(audit_results)
 
@@ -146,9 +148,7 @@ results_df.to_csv(csv_path, index=False)
 
 print(f"\nCSV report saved: {csv_path}")
 
-# ------------------------------
-# SAVE JSON REPORT
-# ------------------------------
+# SAVES JSON REPORT
 
 json_path = "reports/audit_results.json"
 
@@ -165,9 +165,7 @@ with open(json_path, "w") as jf:
 
 print(f"JSON report saved: {json_path}")
 
-# ------------------------------
 # SUMMARY
-# ------------------------------
 
 total = len(results_df)
 passed = len(results_df[results_df["status"] == "Compliant"])
