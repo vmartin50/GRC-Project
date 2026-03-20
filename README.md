@@ -2,54 +2,97 @@
 
 An automated compliance scanning tool designed to audit Windows systems against **NIST 800-171** security controls. This project uses a Python-based engine to execute system checks and a Streamlit dashboard to visualize the compliance status in real-time.
 
+The scanner supports **Windows, macOS, and Linux**, automatically runs security checks for each NIST control, and generates **CSV and JSON reports** summarizing compliance status.  
+
+---
+
+## The Problem
+
+Organizations handling sensitive data often struggle with:
+
+- Ensuring compliance with NIST SP 800-171  
+- Tracking hundreds of security controls manually  
+- Generating reports and POA&M (Plan of Action & Milestones) for failed controls  
+- Visualizing compliance results in an intuitive way  
+
+Manual auditing is **time-consuming, error-prone, and inconsistent**.  
+
+This tool automates these tasks, providing **fast, repeatable, and accurate compliance assessments**.
+
 ---
 
 ## Overview
 
-This tool bridges the gap between complex security requirements and actionable data. It reads a library of security controls from a CSV file, queries the Windows environment (Registry, PowerShell, and CMD), and generates a structured report.
+The `scanner.py` script performs the following steps:
 
-### Key Features
+1. **Package Setup**  
+   Automatically installs missing Python packages (`pandas` and `streamlit`) for ease of use.
 
-- **Data-Driven:** Easily add or edit controls by updating `controls.csv` without touching the code.
-- **Automated Scanning:** Runs deep-system checks via `scanner.py`.
-- **Visual Analytics:** Interactive dashboard via `app.py` for executive and technical reviews.
-- **Multi-Format Reporting:** Generates results in both `.csv` and `.json`.
+2. **Administrator/Root Check**  
+   Ensures the script is run with proper privileges to perform system-level checks.
+
+3. **Load Controls**  
+   Reads `controls.csv`, which contains all NIST SP 800-171 controls with **OS-specific commands**.
+
+4. **Operating System Detection**  
+   Determines the running OS (Windows/macOS/Linux) and selects appropriate commands for each control.
+
+5. **Execute Security Checks**  
+   Iterates through all controls, runs commands, and determines compliance:
+   - **Compliant** if the command succeeds  
+   - **Non-Compliant** if the command fails  
+   - **Not Applicable** if no automated check is available  
+
+6. **Generate Reports**  
+   Saves results to:
+   - `reports/audit_results.csv` (tabular format)  
+   - `reports/audit_results.json` (structured format)  
+
+7. **Summary**  
+   Prints a terminal summary of:
+   - Total controls  
+   - Compliant vs Non-Compliant controls  
+
+8. **POA&M Generation**  
+   Automatically generates a Plan of Action & Milestones for any non-compliant controls in:
+   - `reports/POAM_Report.csv`  
+
+9. **Streamlit Dashboard**  
+   Launch the dashboard for interactive visualization and downloading of POA&M.
 
 ---
 
-## Installation & Setup
+## Features
 
-### 1. Prerequisites
+- **Cross-platform:** Supports Windows, macOS, and Linux  
+- **Automatic dependency installation** (`pandas` and `streamlit`)  
+- **Audit reporting:** Generates CSV and JSON reports  
+- **POA&M Ready:** Automatic Plan of Action & Milestones for failed controls  
+- **User-friendly:** Prints real-time scan status and summary  
 
-- **Windows 10/11** (Pro or Enterprise recommended for full feature support)
-- **Python 3.10+**
-- **Administrator Privileges** (required to query security logs and registry keys)
+---
 
-### 2. Clone the Repository
+## Requirements
 
-Open your terminal and run:
+- Python 3.8+  
+- Administrator/Root privileges to run system-level commands  
+
+No manual installation of dependencies is required — the script handles it automatically.
+
+---
+
+## Quick Start
+
+Follow these steps to run the NIST 800-171 Compliance Scanner:
+
+### Clone the Repository
 
 ```bash
-git clone https://github.com/vmartin50/GRC-Project.git
-cd GRC-Project 
+git clone https://github.com/vmartin50/GRC-project.git
+cd GRC-project
 ```
 
----
-
-
-### 3. Install Dependencies
-
-Open your terminal and run:
-
-```bash
-pip install pandas streamlit
-```
-
----
-
-## How to Use
-
-### Step 1: Run the Audit
+### Run the Scanner
 
 Open your terminal (**PowerShell** or **CMD**) as Administrator and execute:
 
@@ -57,17 +100,31 @@ Open your terminal (**PowerShell** or **CMD**) as Administrator and execute:
 python scanner.py
 ```
 
-The script will loop through all controls in `controls.csv` and create a `reports/` folder containing your results.
+The script will:
+
+- Install required packages if missing
+- Detect your operating system
+- Perform compliance checks for all NIST 800-171 controls
+- Generate CSV and JSON reports in `reports/`
+- Generate POA&M if any controls fail
+
 
 ---
 
-### Step 2: Launch the Dashboard
+## Launch Streamlit Dashboard
 
-Run the Streamlit application to visualize your data:
+Launch the interactive dashboard:
 
 ```bash
 streamlit run app.py
 ```
+
+The dashboard allows you to:
+
+- View live compliance scores
+- Filter controls by family or status
+- Download the POA&M for auditors
+
 
 ---
 
@@ -76,26 +133,16 @@ streamlit run app.py
 ```
 project-folder/
 │
-├── scanner.py        # The engine that executes Windows commands
+├── scanner.py        # The engine that executes Windows/Mac/Linux commands
 ├── app.py            # Streamlit dashboard UI
 ├── controls.csv      # Library containing the NIST families, IDs, and commands
 │
 └── reports/          # Output folder
     ├── audit_results.csv
     └── audit_results.json
+    └── reports/POAM_Report.csv
 ```
 
----
-
-## Security Controls Audited
-
-The current version audits **20+ core controls** across these NIST families:
-
-- **Access Control (AC)**
-- **Identification & Authentication (IA)**
-- **Configuration Management (CM)**
-- **System & Information Integrity (SI)**
-- **Media Protection (MP)**
 
 ---
 
