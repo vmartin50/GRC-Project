@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 
-# ------------------------------
 # PAGE CONFIG
-# ------------------------------
 
 st.set_page_config(
     page_title="NIST 800-171 Compliance Dashboard",
@@ -15,9 +13,7 @@ st.title("NIST 800-171 Compliance Dashboard")
 
 RESULTS_FILE = "reports/audit_results.csv"
 
-# ------------------------------
 # POA&M GENERATOR
-# ------------------------------
 
 def generate_poam(df):
 
@@ -33,10 +29,7 @@ def generate_poam(df):
 
     return poam
 
-
-# ------------------------------
-# LOAD RESULTS
-# ------------------------------
+# LOADS RESULTS
 
 if not os.path.exists(RESULTS_FILE):
     st.error("No audit results found. Run scanner.py first.")
@@ -44,9 +37,7 @@ if not os.path.exists(RESULTS_FILE):
 
 df = pd.read_csv(RESULTS_FILE)
 
-# ------------------------------
 # METRICS
-# ------------------------------
 
 total_controls = len(df)
 passed = len(df[df["status"] == "Compliant"])
@@ -64,9 +55,7 @@ col4.metric("Compliance Score", f"{compliance_score}%")
 
 st.progress(compliance_score / 100)
 
-# ------------------------------
 # CONTROL RESULTS TABLE
-# ------------------------------
 
 st.subheader("Control Assessment Results")
 
@@ -75,9 +64,7 @@ st.dataframe(
     use_container_width=True
 )
 
-# ------------------------------
 # FAMILY BREAKDOWN
-# ------------------------------
 
 st.subheader("Compliance by Control Family")
 
@@ -85,9 +72,8 @@ family_summary = df.groupby(["family", "status"]).size().unstack(fill_value=0)
 
 st.dataframe(family_summary)
 
-# ------------------------------
+
 # POA&M SECTION
-# ------------------------------
 
 st.subheader("Plan of Action & Milestones (POA&M)")
 
@@ -110,9 +96,7 @@ else:
         mime="text/csv"
     )
 
-# ------------------------------
 # FOOTER
-# ------------------------------
 
 st.markdown("---")
 st.caption("NIST 800-171 Automated Compliance Dashboard")
