@@ -1,79 +1,111 @@
-family,id,name,win_command,mac_command,linux_command
-Access Control,3.1.1,Limit system access to authorized users,"net user","dscl . list /Users","cut -d: -f1 /etc/passwd"
-Access Control,3.1.2,Limit system access to authorized devices,"wmic nic get Name,NetEnabled","networksetup -listallhardwareports","ip link show"
-Access Control,3.1.3,Control flow of CUI in accordance with approved authorizations,"echo Check data flow documentation","",""
-Access Control,3.1.4,Separate duties of individuals,"net localgroup","dscl . list /Groups","getent group"
-Access Control,3.1.5,Least privilege principle,"whoami /groups","id","id"
-Access Control,3.1.6,Non-privileged users run non-privileged accounts,"net user","dscl . list /Users","cut -d: -f1 /etc/passwd"
-Access Control,3.1.7,Prevent non-privileged users from executing privileged functions,"whoami /groups","id","id"
-Access Control,3.1.8,Limit unsuccessful logon attempts,"net accounts | findstr Lockout","pwpolicy getaccountpolicies","grep -i deny /etc/pam.d/common-auth"
-Access Control,3.1.9,Session lock after inactivity,"reg query HKEY_CURRENT_USER\\Control Panel\\Desktop /v ScreenSaveTimeOut","defaults -currentHost read com.apple.screensaver idleTime","gsettings get org.gnome.desktop.session idle-delay"
-Access Control,3.1.10,Require user reauthentication after session lock,"reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Control Panel\\Desktop /v ScreenSaverIsSecure","defaults read com.apple.screensaver askForPassword","gsettings get org.gnome.desktop.screensaver lock-enabled"
-Access Control,3.1.11,Terminate sessions after defined conditions,"query session","who -u","who -u"
-Access Control,3.1.12,Monitor and control remote access sessions,"netsh ras show config","system_profiler SPNetworkDataType","ss -tuna"
-Access Control,3.1.13,Employ cryptographic mechanisms for remote access,"reg query HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\SCHANNEL","security find-certificate -a","grep -i ssl /etc/ssh/sshd_config"
-Access Control,3.1.14,Route remote access through managed access control points,"echo Check VPN gateway configuration","",""
-Access Control,3.1.15,Authorize remote execution of privileged commands,"echo Check remote admin policy","",""
-Access Control,3.1.16,Authorize wireless access prior to connection,"netsh wlan show profiles","/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s","nmcli dev wifi"
-Access Control,3.1.17,Protect wireless access using authentication and encryption,"netsh wlan show interfaces","networksetup -getairportnetwork en0","nmcli dev wifi show-password"
-Access Control,3.1.18,Control connection of mobile devices,"echo Check MDM policy","",""
-Access Control,3.1.19,Encrypt CUI on mobile devices,"manage-bde -status","fdesetup status","lsblk -f"
-Access Control,3.1.20,Verify external systems before connection,"echo Check external connection policy","",""
-Access Control,3.1.21,Limit use of external systems,"echo Check external system policy","",""
-Access Control,3.1.22,Control use of portable storage devices,"reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\RemovableStorageDevices","system_profiler SPUSBDataType","lsusb"
-Access Control,3.1.23,Prohibit use of portable storage devices when nonessential,"reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\RemovableStorageDevices","system_profiler SPUSBDataType","lsusb"
-Access Control,3.1.24,Control use of publicly accessible systems,"echo Check kiosk policy","",""
-Awareness and Training,3.2.1,Ensure managers and users are aware of security risks,"if exist C:\\Users\\Public\\Security_Policy.txt (exit 0) else (exit 1)","test -f /Users/Shared/Security_Policy.txt","test -f /usr/local/share/Security_Policy.txt"
-Awareness and Training,3.2.2,Ensure personnel are trained to carry out duties,"echo Check training records","",""
-Awareness and Training,3.2.3,Provide security awareness training,"echo Check awareness program","",""
-Audit and Accountability,3.3.1,Create and retain system audit logs,"wevtutil gl System","log show --info","journalctl --verify"
-Audit and Accountability,3.3.2,Ensure audit logs support incident investigation,"echo Check log retention policy","",""
-Audit and Accountability,3.3.3,Review and update audited events,"echo Check audit policy","",""
-Audit and Accountability,3.3.4,Alert in response to audit processing failures,"wevtutil gl Security","log show --predicate eventMessage contains error --last 1","journalctl -p err -n 1"
-Audit and Accountability,3.3.5,Correlate audit review and analysis,"echo Check SIEM correlation","",""
-Audit and Accountability,3.3.6,Provide audit reduction and report generation,"echo Check log analysis tools","",""
-Audit and Accountability,3.3.7,Provide audit record protection,"echo Check log access controls","",""
-Audit and Accountability,3.3.8,Protect audit tools from unauthorized access,"echo Check admin-only access","",""
-Configuration Management,3.4.1,Establish and maintain baseline configurations,"driverquery","system_profiler SPHardwareDataType","uname -a"
-Configuration Management,3.4.2,Establish and enforce security configuration settings,"secedit /export /cfg C:\\temp\\secpol.cfg","echo Check configuration profiles","echo Check sysctl configuration"
-Configuration Management,3.4.3,Track and approve changes,"echo Check change management records","",""
-Configuration Management,3.4.4,Analyze security impact of changes,"echo Check change impact analysis","",""
-Configuration Management,3.4.5,Define and document system components,"echo Check system inventory","",""
-Configuration Management,3.4.6,Employ least functionality,"echo Check unnecessary services","",""
-Configuration Management,3.4.7,Restrict nonessential programs and services,"powershell Get-StartApps","system_profiler SPApplicationsDataType","dpkg -l"
-Configuration Management,3.4.8,Implement application whitelisting,"reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Safer\\CodeIdentifiers","spctl --status","grep ExecShield /etc/sysctl.conf"
-Configuration Management,3.4.9,Control and monitor use of system utilities,"powershell Get-Command","ls /usr/bin","ls /usr/bin"
-Identification and Authentication,3.5.1,Identify users and processes,"whoami","id","id"
-Identification and Authentication,3.5.2,Enforce password complexity,"net accounts","pwpolicy getaccountpolicies","grep pam_pwquality /etc/pam.d/common-password"
-Identification and Authentication,3.5.3,Enforce password reuse restrictions,"net accounts","pwpolicy getaccountpolicies","grep remember /etc/pam.d/common-password"
-Identification and Authentication,3.5.4,Prevent reuse of identifiers,"echo Check account naming policy","",""
-Identification and Authentication,3.5.5,Use multifactor authentication for local access,"echo Check MFA configuration","",""
-Identification and Authentication,3.5.6,Use multifactor authentication for network access,"echo Check VPN MFA","",""
-Identification and Authentication,3.5.7,Use multifactor authentication for privileged accounts,"echo Check admin MFA","",""
-Identification and Authentication,3.5.8,Protect authentication secrets,"reg query HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa","pwpolicy getaccountpolicies","grep ENCRYPT_METHOD /etc/login.defs"
-Incident Response,3.6.1,Establish incident handling capability,"powershell Get-Service EventLog","launchctl list | grep auditd","systemctl status auditd"
-Incident Response,3.6.2,Track and report incidents,"echo Check incident tickets","",""
-Incident Response,3.6.3,Test incident response capability,"echo Check IR test records","",""
-Maintenance,3.7.1,Perform maintenance on systems,"echo Check maintenance logs","",""
-Maintenance,3.7.2,Control maintenance tools,"powershell Get-Command","ls /usr/bin","ls /usr/bin"
-Maintenance,3.7.3,Require MFA for remote maintenance,"echo Check remote maintenance MFA","",""
-Maintenance,3.7.4,Authorize remote maintenance,"echo Check remote maintenance policy","",""
-Maintenance,3.7.5,Terminate remote maintenance sessions,"echo Check remote session policy","",""
-Media Protection,3.8.1,Protect CUI on media,"reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\RemovableStorageDevices","system_profiler SPUSBDataType","lsusb"
-Media Protection,3.8.2,Limit access to CUI on media,"echo Check media access controls","",""
-Media Protection,3.8.3,Sanitize or destroy media,"manage-bde -status","fdesetup status","lsblk -f"
-Personnel Security,3.9.1,Screen individuals prior to authorization,"echo Check HR screening records","",""
-Personnel Security,3.9.2,Ensure access is revoked upon termination,"echo Check termination access revocation","",""
-Physical Protection,3.10.1,Limit physical access to systems,"echo Check physical access controls","",""
-Physical Protection,3.10.2,Protect and monitor facility access,"echo Check badge logs","",""
-Risk Assessment,3.11.1,Periodically assess risk,"echo Check risk assessment reports","",""
-Risk Assessment,3.11.2,Scan for vulnerabilities,"powershell Get-Package","system_profiler SPInstallHistoryDataType","dpkg -l"
-Risk Assessment,3.11.3,Remediate vulnerabilities,"echo Check vulnerability remediation records","",""
-Security Assessment,3.12.1,Periodically assess security controls,"echo Check assessment reports","",""
-Security Assessment,3.12.2,Develop plans of action,"echo Check POAM records","",""
-Security Assessment,3.12.3,Monitor security controls,"echo Check continuous monitoring","",""
-System and Communications Protection,3.13.1,Monitor communications boundaries,"netsh advfirewall show allprofiles","/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate","ufw status"
-System and Communications Protection,3.13.5,Implement boundary protections,"netsh advfirewall show allprofiles","/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate","ufw status"
-System and Information Integrity,3.14.1,Identify and correct system flaws,"powershell Get-HotFix","softwareupdate --history","apt list --installed"
-System and Information Integrity,3.14.2,Provide protection from malicious code,"powershell Get-MpComputerStatus","pgrep XProtect","systemctl status clamav-daemon"
-System and Information Integrity,3.14.6,Monitor system events,"wevtutil qe Security /c:5","log show --last 1m","journalctl -n 5"
+family,id,name,win_command,mac_command,linux_command,status,severity,automated,weight,notes
+Access Control,3.1.1,Limit system access to authorized users,"net user","dscl . list /Users","cut -d: -f1 /etc/passwd",Not Tested,High,True,5,
+Access Control,3.1.2,Limit system access to authorized devices,"wmic nic get Name,NetEnabled","networksetup -listallhardwareports","ip link show",Not Tested,Medium,True,4,
+Access Control,3.1.3,Control flow of CUI,"echo Check data flow","","",Manual,High,False,5,
+Access Control,3.1.4,Separate duties of individuals,"net localgroup","dscl . list /Groups","getent group",Not Tested,Medium,True,4,
+Access Control,3.1.5,Least privilege principle,"whoami /groups","id","id",Not Tested,High,True,5,
+Access Control,3.1.6,Use non-privileged accounts,"net user","dscl . list /Users","cut -d: -f1 /etc/passwd",Not Tested,High,True,5,
+Access Control,3.1.7,Prevent non-privileged execution of privileged functions,"whoami /groups","id","id",Not Tested,High,True,5,
+Access Control,3.1.8,Limit unsuccessful logon attempts,"net accounts","pwpolicy getaccountpolicies","grep deny /etc/pam.d/common-auth",Not Tested,High,True,5,
+Access Control,3.1.9,Session lock after inactivity,"reg query HKCU\\Control Panel\\Desktop","defaults read com.apple.screensaver idleTime","gsettings get org.gnome.desktop.session idle-delay",Not Tested,Medium,True,4,
+Access Control,3.1.10,Require reauthentication after lock,"reg query HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows","defaults read com.apple.screensaver askForPassword","gsettings get org.gnome.desktop.screensaver lock-enabled",Not Tested,Medium,True,4,
+Access Control,3.1.11,Terminate sessions after conditions,"query session","who -u","who -u",Not Tested,Medium,True,4,
+Access Control,3.1.12,Monitor remote access sessions,"netsh ras show config","system_profiler SPNetworkDataType","ss -tuna",Not Tested,High,True,5,
+Access Control,3.1.13,Cryptographic mechanisms for remote access,"echo Check TLS","","",Manual,High,False,5,
+Access Control,3.1.14,Route remote access through control points,"echo Check VPN","","",Manual,High,False,5,
+Access Control,3.1.15,Authorize remote privileged commands,"echo Check remote admin policy","","",Manual,High,False,5,
+Access Control,3.1.16,Authorize wireless access,"netsh wlan show profiles","airport -s","nmcli dev wifi",Not Tested,Medium,True,4,
+Access Control,3.1.17,Protect wireless access,"netsh wlan show interfaces","networksetup -getairportnetwork en0","nmcli dev wifi",Not Tested,Medium,True,4,
+Access Control,3.1.18,Control mobile device connections,"echo Check MDM policy","","",Manual,Medium,False,4,
+Access Control,3.1.19,Encrypt CUI on mobile devices,"manage-bde -status","fdesetup status","lsblk -f",Not Tested,High,True,5,
+Access Control,3.1.20,Verify external systems,"echo Check external policy","","",Manual,Medium,False,4,
+Access Control,3.1.21,Limit use of external systems,"echo Check external usage policy","","",Manual,Medium,False,4,
+Access Control,3.1.22,Control portable storage devices,"echo Check USB policy","","lsusb",Manual,Medium,False,4,
+Awareness and Training,3.2.1,Ensure personnel aware of security risks,"echo Check policy","","",Manual,Medium,False,3,
+Awareness and Training,3.2.2,Ensure personnel trained,"echo Check training records","","",Manual,Medium,False,3,
+Awareness and Training,3.2.3,Provide threat recognition training,"echo Check awareness program","","",Manual,Medium,False,3,
+Audit and Accountability,3.3.1,Create audit logs,"wevtutil gl System","log show --info","journalctl",Not Tested,High,True,5,
+Audit and Accountability,3.3.2,Ensure logs support investigation,"echo Check log retention","","",Manual,High,False,5,
+Audit and Accountability,3.3.3,Review audited events,"echo Check audit policy","","",Manual,Medium,False,4,
+Audit and Accountability,3.3.4,Alert for audit failures,"echo Check alerts","","",Manual,High,False,5,
+Audit and Accountability,3.3.5,Correlate audit review,"echo Check SIEM","","",Manual,Medium,False,4,
+Audit and Accountability,3.3.6,Provide audit reduction,"echo Check log tools","","",Manual,Medium,False,4,
+Audit and Accountability,3.3.7,Protect audit logs,"echo Check log permissions","","",Manual,High,False,5,
+Audit and Accountability,3.3.8,Protect audit tools,"echo Check admin controls","","",Manual,High,False,5,
+Audit and Accountability,3.3.9,Limit management of audit functions,"echo Check admin audit policy","","",Manual,High,False,5,
+Configuration Management,3.4.1,Maintain baseline configurations,"driverquery","system_profiler SPHardwareDataType","uname -a",Not Tested,Medium,True,4,
+Configuration Management,3.4.2,Enforce security configuration,"echo Check config policy","","",Manual,High,False,5,
+Configuration Management,3.4.3,Track configuration changes,"echo Check change management","","",Manual,Medium,False,4,
+Configuration Management,3.4.4,Analyze security impact of changes,"echo Check change risk","","",Manual,Medium,False,4,
+Configuration Management,3.4.5,Define system components,"echo Check asset inventory","","",Manual,Medium,False,4,
+Configuration Management,3.4.6,Employ least functionality,"echo Check services","","",Manual,Medium,False,4,
+Configuration Management,3.4.7,Restrict nonessential programs,"echo Check installed apps","","dpkg -l",Manual,Medium,False,4,
+Configuration Management,3.4.8,Application whitelisting,"echo Check app control","","",Manual,High,False,5,
+Configuration Management,3.4.9,Control system utilities,"echo Check utilities","","",Manual,Medium,False,4,
+Identification and Authentication,3.5.1,Identify users,"whoami","id","id",Not Tested,High,True,5,
+Identification and Authentication,3.5.2,Authenticate users,"echo Check auth","","",Manual,High,False,5,
+Identification and Authentication,3.5.3,Use multifactor authentication,"echo Check MFA","","",Manual,High,False,5,
+Identification and Authentication,3.5.4,Replay-resistant authentication,"echo Check Kerberos","","",Manual,High,False,5,
+Identification and Authentication,3.5.5,Prevent reuse of identifiers,"echo Check naming policy","","",Manual,Medium,False,4,
+Identification and Authentication,3.5.6,Disable identifiers after inactivity,"echo Check account expiration","","",Manual,Medium,False,4,
+Identification and Authentication,3.5.7,Enforce password complexity,"net accounts","pwpolicy getaccountpolicies","grep pam_pwquality",Not Tested,High,True,5,
+Identification and Authentication,3.5.8,Prevent password reuse,"net accounts","pwpolicy getaccountpolicies","grep remember",Not Tested,High,True,5,
+Identification and Authentication,3.5.9,Allow temporary passwords for new accounts,"echo Check temp passwords","","",Manual,Medium,False,4,
+Identification and Authentication,3.5.10,Store passwords securely,"echo Check hashing","","",Manual,High,False,5,
+Identification and Authentication,3.5.11,Obscure authentication feedback,"echo Check login banners","","",Manual,Medium,False,4,
+Incident Response,3.6.1,Establish incident handling capability,"echo Check IR policy","","",Manual,High,False,5,
+Incident Response,3.6.2,Track incidents,"echo Check incident tickets","","",Manual,High,False,5,
+Incident Response,3.6.3,Test incident response capability,"echo Check IR tests","","",Manual,High,False,5,
+Maintenance,3.7.1,Perform maintenance on systems,"echo Check maintenance logs","","",Manual,Medium,False,4,
+Maintenance,3.7.2,Control maintenance tools,"echo Check tools","","",Manual,Medium,False,4,
+Maintenance,3.7.3,Sanitize maintenance tools,"echo Check sanitization","","",Manual,Medium,False,4,
+Maintenance,3.7.4,Control remote maintenance,"echo Check remote maintenance","","",Manual,High,False,5,
+Maintenance,3.7.5,Approve maintenance personnel,"echo Check authorization","","",Manual,Medium,False,4,
+Maintenance,3.7.6,Monitor maintenance activity,"echo Check monitoring","","",Manual,Medium,False,4,
+Media Protection,3.8.1,Protect CUI on media,"echo Check encryption","","",Manual,High,False,5,
+Media Protection,3.8.2,Limit media access,"echo Check media access","","",Manual,Medium,False,4,
+Media Protection,3.8.3,Sanitize media,"echo Check destruction","","",Manual,High,False,5,
+Media Protection,3.8.4,Mark media with CUI,"echo Check labeling","","",Manual,Medium,False,4,
+Media Protection,3.8.5,Control media transport,"echo Check transport","","",Manual,Medium,False,4,
+Media Protection,3.8.6,Protect digital media during transport,"echo Check encrypted transfer","","",Manual,High,False,5,
+Media Protection,3.8.7,Control use of removable media,"echo Check USB policy","","",Manual,Medium,False,4,
+Media Protection,3.8.8,Prohibit portable storage when not needed,"echo Check restrictions","","",Manual,Medium,False,4,
+Personnel Security,3.9.1,Screen individuals prior to access,"echo Check HR screening","","",Manual,Medium,False,4,
+Personnel Security,3.9.2,Ensure access revoked upon termination,"echo Check offboarding","","",Manual,High,False,5,
+Physical Protection,3.10.1,Limit physical access,"echo Check locks","","",Manual,High,False,5,
+Physical Protection,3.10.2,Monitor physical access,"echo Check cameras","","",Manual,High,False,5,
+Physical Protection,3.10.3,Escort visitors,"echo Check visitor policy","","",Manual,Medium,False,4,
+Physical Protection,3.10.4,Maintain access logs,"echo Check badge logs","","",Manual,Medium,False,4,
+Physical Protection,3.10.5,Control physical devices,"echo Check key policy","","",Manual,Medium,False,4,
+Physical Protection,3.10.6,Protect power and cabling,"echo Check facility protection","","",Manual,Medium,False,4,
+Risk Assessment,3.11.1,Periodically assess risk,"echo Check risk reports","","",Manual,High,False,5,
+Risk Assessment,3.11.2,Scan for vulnerabilities,"echo Run vulnerability scan","","",Manual,High,False,5,
+Risk Assessment,3.11.3,Remediate vulnerabilities,"echo Check patching","","",Manual,High,False,5,
+Security Assessment,3.12.1,Assess security controls,"echo Check assessment","","",Manual,High,False,5,
+Security Assessment,3.12.2,Develop POA&M,"echo Check POAM","","",Manual,High,False,5,
+Security Assessment,3.12.3,Monitor controls continuously,"echo Check monitoring","","",Manual,High,False,5,
+Security Assessment,3.12.4,System security plan updates,"echo Check SSP","","",Manual,High,False,5,
+System and Communications Protection,3.13.1,Monitor communications boundaries,"echo Check firewall","","",Manual,High,False,5,
+System and Communications Protection,3.13.2,Architectural security design,"echo Check network architecture","","",Manual,High,False,5,
+System and Communications Protection,3.13.3,Separate user/system management,"echo Check separation","","",Manual,Medium,False,4,
+System and Communications Protection,3.13.4,Prevent unauthorized transfer,"echo Check DLP","","",Manual,High,False,5,
+System and Communications Protection,3.13.5,Implement boundary protections,"echo Check firewall rules","","",Manual,High,False,5,
+System and Communications Protection,3.13.6,Protect confidentiality in transit,"echo Check TLS","","",Manual,High,False,5,
+System and Communications Protection,3.13.7,Prevent split tunneling,"echo Check VPN policy","","",Manual,High,False,5,
+System and Communications Protection,3.13.8,Cryptographic mechanisms for CUI,"echo Check encryption","","",Manual,High,False,5,
+System and Communications Protection,3.13.9,Terminate sessions after inactivity,"echo Check idle timeout","","",Manual,Medium,False,4,
+System and Communications Protection,3.13.10,Establish cryptographic keys,"echo Check key management","","",Manual,High,False,5,
+System and Communications Protection,3.13.11,FIPS validated crypto,"echo Check FIPS","","",Manual,High,False,5,
+System and Communications Protection,3.13.12,Prohibit remote activation devices,"echo Check camera policy","","",Manual,Medium,False,4,
+System and Communications Protection,3.13.13,Control mobile code,"echo Check scripts","","",Manual,Medium,False,4,
+System and Communications Protection,3.13.14,Control VoIP use,"echo Check VoIP security","","",Manual,Medium,False,4,
+System and Communications Protection,3.13.15,Protect transmitted info integrity,"echo Check hashing","","",Manual,High,False,5,
+System and Communications Protection,3.13.16,Protect CUI at rest,"echo Check disk encryption","","",Manual,High,False,5,
+System and Information Integrity,3.14.1,Identify system flaws,"echo Check vulnerabilities","","",Manual,High,False,5,
+System and Information Integrity,3.14.2,Malicious code protection,"echo Check antivirus","","",Manual,High,False,5,
+System and Information Integrity,3.14.3,Monitor security alerts,"echo Check advisories","","",Manual,Medium,False,4,
+System and Information Integrity,3.14.4,Update protection mechanisms,"echo Check updates","","",Manual,High,False,5,
+System and Information Integrity,3.14.5,Perform periodic scans,"echo Check scans","","",Manual,High,False,5,
+System and Information Integrity,3.14.6,Monitor system events,"echo Check SIEM","","",Manual,High,False,5,
+System and Information Integrity,3.14.7,Identify unauthorized use,"echo Check monitoring","","",Manual,High,False,5,
+System and Information Integrity,3.14.8,Spam protection mechanisms,"echo Check email filtering","","",Manual,Medium,False,4,
